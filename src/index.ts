@@ -27,11 +27,11 @@ async function main() {
 
   const len = init.getAnalyzedData().length;
 
-  console.log("-----------------------------------------------------");
-  console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 3]);
-  console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
-  console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
-  console.log("-----------------------------------------------------");
+  // console.log("-----------------------------------------------------");
+  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 3]);
+  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
+  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
+  // console.log("-----------------------------------------------------");
 
   const topics = ["kline.5.BTCUSDT"];
 
@@ -44,10 +44,10 @@ async function main() {
 
     init.transformSingleDP(data.data[0]);
 
-    console.log("-----------------------------------------------------");
-    console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
-    console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
-    console.log("-----------------------------------------------------");
+    // console.log("-----------------------------------------------------");
+    // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
+    // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
+    // console.log("-----------------------------------------------------");
   });
 
   wsClient.on("open", (data) => {
