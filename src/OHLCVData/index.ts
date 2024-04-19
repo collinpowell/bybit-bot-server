@@ -208,13 +208,13 @@ class OHLCVData {
       this.marketTrend = "Sell";
     }
 
-    // console.log(
-    //   presentDp.timestamp,
-    //   this.marketTrend,
-    //   "50 EMA => " + presentDp.ema[50],
-    //   "100 EMA => " + presentDp.ema[100],
-    //   "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
-    // );
+    console.log(
+       presentDp.timestamp,
+       this.marketTrend,
+       "50 EMA => " + presentDp.ema[50],
+       "100 EMA => " + presentDp.ema[100],
+       "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
+     );
   }
 }
 
