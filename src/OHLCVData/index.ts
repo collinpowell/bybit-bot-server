@@ -14,10 +14,10 @@ interface OHLCVDataType {
 }
 
 class OHLCVData {
-  private symbol: string = "";
+  private symbol!: string;
   private interval: KlineIntervalV3 = "5";
-  private start: number = Date.now();
-  private end: number = Date.now();
+  private start!: number;
+  private end!: number;
   public marketTrend: string = "Unknown";
 
   private data: Array<DataPoint> = [];
@@ -173,20 +173,20 @@ class OHLCVData {
     let lastDp = this.data[position - 1];
     let presentDp = this.data[position];
 
-    const trade = new Trader(100000, 2);
+    const trade = new Trader(100000, 2, this.symbol);
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
         presentDp.macdLine >= presentDp.signalLine
       ) {
-        trade.executeTrade("Buy", currentPrice);
+        trade.executeTrade("Buy");
       }
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine
       ) {
-        trade.executeTrade("Sell", currentPrice);
+        trade.executeTrade("Sell");
       }
     }
   }
@@ -207,7 +207,7 @@ class OHLCVData {
     ) {
       this.marketTrend = "Sell";
     }
-    
+
     console.log(
       presentDp.timestamp,
       this.marketTrend,
@@ -215,7 +215,6 @@ class OHLCVData {
       "100 EMA => " + presentDp.ema[100],
       "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
     );
-    
   }
 }
 

@@ -4,10 +4,9 @@ import { DefaultLogger, WS_KEY_MAP, WebsocketClient } from "bybit-api";
 
 import express from "express";
 const app = express();
-const port = process.env.PORT || 3000
-
+const port = process.env.PORT || 3000;
 import OHLCVData from "./OHLCVData";
-
+import Trader from "./Trader";
 
 async function main() {
   const days = 7; // hrs
@@ -16,8 +15,9 @@ async function main() {
 
   // Current time in milliseconds
 
+  const symbol = "BTCUSDT";
   const init = new OHLCVData({
-    symbol: "BTCUSDT",
+    symbol,
     interval: "5",
     start,
     end,
@@ -41,13 +41,13 @@ async function main() {
 
   wsClient.on("update", (data) => {
     //console.log("raw message received ", data);
+
     init.transformSingleDP(data.data[0]);
-    
+
     console.log("-----------------------------------------------------");
     console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
     console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
     console.log("-----------------------------------------------------");
-    
   });
 
   wsClient.on("open", (data) => {
