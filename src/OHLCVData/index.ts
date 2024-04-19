@@ -173,7 +173,7 @@ class OHLCVData {
     let lastDp = this.data[position - 1];
     let presentDp = this.data[position];
 
-    const trade = new Trader(100000, 4, this.symbol);
+    const trade = new Trader(100000, 2, this.symbol);
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
