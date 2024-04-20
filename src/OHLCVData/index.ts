@@ -23,6 +23,8 @@ class OHLCVData {
   private tradePosition: number = 0;
   private data: Array<DataPoint> = [];
 
+  private isDone: boolean = true;
+
   public constructor(params: OHLCVDataType) {
     this.symbol = params.symbol;
     this.interval = params.interval;
@@ -175,30 +177,32 @@ class OHLCVData {
     this.trade(newData?.close, position);
   }
 
-  private trade(currentPrice: number, position: number) {
+  private async trade(currentPrice: number, position: number) {
     let lastDp = this.data[position - 1];
     let presentDp = this.data[position];
 
-    const trade = new Trader(1000, this.symbol, 2, 1 / 1.5);
+    const trade = new Trader(1000, this.symbol, 2, 1 / 1);
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
         presentDp.macdLine >= presentDp.signalLine &&
-        position != this.tradePosition
+        position != this.tradePosition &&
+        this.isDone
       ) {
-        trade.executeTrade("Buy").then(() => {
-          this.tradePosition = position;
-        });
+        this.isDone = false;
+        this.isDone = await trade.executeTrade("Buy");
+        this.tradePosition = position;
       }
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine &&
-        position != this.tradePosition
+        position != this.tradePosition &&
+        this.isDone
       ) {
-        trade.executeTrade("Sell").then(() => {
-          this.tradePosition = position;
-        });
+        this.isDone = false;
+        this.isDone = await trade.executeTrade("Sell");
+        this.tradePosition = position;
       }
     }
   }

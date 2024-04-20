@@ -103,6 +103,7 @@ class Trader {
     } catch (error) {
       console.error(error);
     }
+    return true;
   }
 }
 
