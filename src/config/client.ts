@@ -7,7 +7,7 @@ const demo = process.env.DEMO == "false" ? false : true;
 if (!key) {
   throw new Error("Kindly Configure API Keys and Secrets");
 } else if (key.length < 1) {
-  throw new Error("Kindly Configure API Keys and Secrets");
+  throw new Error("Invalid API Keys and Secrets");
 }
 
 const client = new RestClientV5({

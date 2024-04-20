@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
+dotenv.config(); // Configure .env
 import { KlineIntervalV3, WebsocketClient } from "bybit-api";
 import express from "express";
 import Bot from "./Bot";
 
-dotenv.config(); // Configure .env
 const app = express();
 const port = process.env.PORT || 3000;
 
