@@ -8,10 +8,10 @@ const port = process.env.PORT || 3000;
 import OHLCVData from "./OHLCVData";
 
 async function main() {
-  const days = 2; // hrs
+  const days = 5; // hrs
   const end = Date.now();
   const start = end - 24 * days * 60 * 60 * 1000; // 24 hours in milliseconds
-  const interval = "1"
+  const interval = "5"
   const symbol = "BTCUSDT";
 
   const init = new OHLCVData({
