@@ -15,7 +15,7 @@ interface OHLCVDataType {
 
 class OHLCVData {
   private symbol!: string;
-  private interval: KlineIntervalV3 = "5";
+  private interval!: KlineIntervalV3;
   private start!: number;
   private end!: number;
   public marketTrend: string = "Unknown";

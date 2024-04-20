@@ -24,7 +24,7 @@ async function main() {
   await init.transform();
 
   const len = init.getAnalyzedData().length;
-  console.log(len)
+  console.log("Data Length => ",len)
   // console.log("-----------------------------------------------------");
   // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 3]);
   // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
