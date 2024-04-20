@@ -72,7 +72,7 @@ class OHLCVData {
       });
       //console.log(data);
       if (data.retMsg == "OK") {
-        console.log("ata Fetched Successfully");
+        console.log("Data Fetched Successfully");
         return data.result.list;
       } else {
         throw new Error(data.retMsg);
@@ -189,7 +189,8 @@ class OHLCVData {
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
-        presentDp.macdLine < presentDp.signalLine
+        presentDp.macdLine < presentDp.signalLine &&
+        position != this.tradePosition
       ) {
         trade.executeTrade("Sell").then(() => {
           this.tradePosition = position;

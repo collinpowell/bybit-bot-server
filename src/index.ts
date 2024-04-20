@@ -6,7 +6,6 @@ import express from "express";
 const app = express();
 const port = process.env.PORT || 3000;
 import OHLCVData from "./OHLCVData";
-import Trader from "./Trader";
 
 async function main() {
   const days = 7; // hrs
@@ -51,16 +50,16 @@ async function main() {
   });
 
   wsClient.on("open", (data) => {
-    console.log("connection opened open:", data.wsKey);
+    console.log("connection opened open:");
   });
   wsClient.on("response", (data) => {
     //console.log("log response: ", JSON.stringify(data, null, 2));
   });
   wsClient.on("reconnect", ({ wsKey }) => {
-    console.log("ws automatically reconnecting.... ", wsKey);
+    console.log("ws automatically reconnecting.... ");
   });
   wsClient.on("reconnected", (data) => {
-    console.log("ws has reconnected ", data?.wsKey);
+    console.log("ws has reconnected ");
   });
 
   try {
