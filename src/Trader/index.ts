@@ -5,7 +5,7 @@ class Trader {
   private usdtQuantity!: number;
   private tpPercent!: number;
   private slPercent!: number;
-  private symbol!: string;
+  protected symbol!: string;
   private margin!: number;
 
   public getStopLossPercent() {
@@ -63,7 +63,7 @@ class Trader {
     this.slPercent = Number(y.toFixed(4));
   }
 
-  public async executeTrade(side: "Buy" | "Sell") {
+  protected async executeTrade(side: "Buy" | "Sell") {
     try {
       const res = await client.getTickers({
         category: "linear",

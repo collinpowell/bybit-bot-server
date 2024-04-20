@@ -6,15 +6,19 @@ import { KlineIntervalV3, OHLCVKlineV5 } from "bybit-api";
 
 const emaWindows = [12, 26, 50, 100];
 
-interface OHLCVDataType {
+interface BotDataType {
   symbol: string;
   interval: KlineIntervalV3;
   start: number;
   end: number;
+
+  tradeQuantity: number;
+  pnlRatio: number;
+  profit: number;
 }
 
-class OHLCVData {
-  private symbol!: string;
+class Bot extends Trader {
+  //private symbol!: string;
   private interval!: KlineIntervalV3;
   private start!: number;
   private end!: number;
@@ -25,8 +29,8 @@ class OHLCVData {
 
   private isDone: boolean = true;
 
-  public constructor(params: OHLCVDataType) {
-    this.symbol = params.symbol;
+  public constructor(params: BotDataType) {
+    super(params.tradeQuantity, params.symbol, params.profit, params.pnlRatio);
     this.interval = params.interval;
     const trim =
       (params.end % this.getNumericIntervalMS()) + this.getNumericIntervalMS();
@@ -106,7 +110,7 @@ class OHLCVData {
     }
   }
 
-  public async transform() {
+  public async transformRawData() {
     try {
       const chartData = await this.getInitData();
 
@@ -122,28 +126,14 @@ class OHLCVData {
         this.data.push(newPoint);
         this.updateMarketTrend(i);
       });
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   }
 
   public transformSingleDP(newData: any) {
-    /**
-     * 
-     * {
-      start: 1713467700000,
-      end: 1713467999999,
-      interval: '5',
-      open: '63100',
-      close: '63094.9',
-      high: '63208.5',
-      low: '63079.7',
-      volume: '109.446',
-      turnover: '6911278.249',
-      confirm: false,
-      timestamp: 1713467829660
-    }
-     */
     const item: OHLCVKlineV5 = [
       newData?.start,
       newData?.open,
@@ -180,8 +170,6 @@ class OHLCVData {
   private async trade(currentPrice: number, position: number) {
     let lastDp = this.data[position - 1];
     let presentDp = this.data[position];
-
-    const trade = new Trader(1000, this.symbol, 1, 1 / 1);
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
@@ -190,7 +178,7 @@ class OHLCVData {
         this.isDone
       ) {
         this.isDone = false;
-        this.isDone = await trade.executeTrade("Buy");
+        this.isDone = await this.executeTrade("Buy");
         this.tradePosition = position;
       }
     } else if (this.marketTrend == "Sell") {
@@ -201,7 +189,7 @@ class OHLCVData {
         this.isDone
       ) {
         this.isDone = false;
-        this.isDone = await trade.executeTrade("Sell");
+        this.isDone = await this.executeTrade("Sell");
         this.tradePosition = position;
       }
     }
@@ -234,4 +222,4 @@ class OHLCVData {
   }
 }
 
-export default OHLCVData;
+export default Bot;

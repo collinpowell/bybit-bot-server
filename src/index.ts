@@ -1,35 +1,48 @@
 import dotenv from "dotenv";
-dotenv.config(); // Configure .env
-import { DefaultLogger, WS_KEY_MAP, WebsocketClient } from "bybit-api";
-
+import { KlineIntervalV3, WebsocketClient } from "bybit-api";
 import express from "express";
+import Bot from "./Bot";
+
+dotenv.config(); // Configure .env
 const app = express();
 const port = process.env.PORT || 3000;
-import OHLCVData from "./OHLCVData";
 
 async function main() {
-  const days = 5; // hrs
+  const days = process.env.DATA_PERIOD_DAYS
+    ? Number(process.env.DATA_PERIOD_DAYS)
+    : 5; // Days
   const end = Date.now();
   const start = end - 24 * days * 60 * 60 * 1000; // 24 hours in milliseconds
-  const interval = "5"
-  const symbol = "BTCUSDT";
+  const interval = process.env.INTERVAL
+    ? (process.env.INTERVAL as KlineIntervalV3)
+    : "5";
+  const symbol = process.env.SYMBOL ? process.env.SYMBOL : "BTCUSDT";
+  const tradeQuantity = process.env.AMOUNT_PER_TRADE
+    ? eval(process.env.AMOUNT_PER_TRADE)
+    : 100;
+  const pnlRatio = process.env.PNL_RATIO ? eval(process.env.PNL_RATIO) : 1;
+  const profit = process.env.PROFIT_PERCENT
+    ? eval(process.env.PROFIT_PERCENT)
+    : 1;
 
-  const init = new OHLCVData({
+  const bot = new Bot({
     symbol,
     interval,
     start,
     end,
+    tradeQuantity,
+    pnlRatio,
+    profit,
   });
 
-  await init.transform();
+  const transformed = await bot.transformRawData();
 
-  const len = init.getAnalyzedData().length;
-  console.log("Data Length => ",len)
-  // console.log("-----------------------------------------------------");
-  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 3]);
-  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
-  // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
-  // console.log("-----------------------------------------------------");
+  if (!transformed) {
+    throw new Error("Transformation Failed");
+  }
+
+  const len = bot.getAnalyzedData().length;
+  console.log("Data Length => ", len);
 
   const topics = [`kline.${interval}.${symbol}`];
 
@@ -38,20 +51,8 @@ async function main() {
   });
 
   wsClient.on("update", (data) => {
-    init.transformSingleDP(data.data[0]);
+    bot.transformSingleDP(data.data[0]);
   });
-  // wsClient.on("open", (data) => {
-  //   console.log("connection opened open:");
-  // });
-  // wsClient.on("response", (data) => {
-  //   //console.log("log response: ", JSON.stringify(data, null, 2));
-  // });
-  // wsClient.on("reconnect", ({ wsKey }) => {
-  //   console.log("ws automatically reconnecting.... ");
-  // });
-  // wsClient.on("reconnected", (data) => {
-  //   console.log("ws has reconnected ");
-  // });
 
   try {
     await wsClient.subscribeV5(topics[0], "linear");
@@ -67,5 +68,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on Port: ${port}`);
 });
