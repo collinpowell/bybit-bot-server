@@ -17,7 +17,7 @@ async function main() {
   const symbol = "BTCUSDT";
   const init = new OHLCVData({
     symbol,
-    interval: "5",
+    interval: "1",
     start,
     end,
   });
