@@ -11,13 +11,13 @@ async function main() {
   const days = 2; // hrs
   const end = Date.now();
   const start = end - 24 * days * 60 * 60 * 1000; // 24 hours in milliseconds
-
+  const interval = "1"
   // Current time in milliseconds
 
   const symbol = "BTCUSDT";
   const init = new OHLCVData({
     symbol,
-    interval: "1",
+    interval,
     start,
     end,
   });
@@ -32,7 +32,7 @@ async function main() {
   // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
   // console.log("-----------------------------------------------------");
 
-  const topics = ["kline.5.BTCUSDT"];
+  const topics = [`kline.${interval}.${symbol}`];
 
   const wsClient = new WebsocketClient({
     market: "v5",
