@@ -55,6 +55,10 @@ class OHLCVData {
   }
 
   private getLimit() {
+    console.log(
+      "Limit = ",
+      Math.round((this.end - this.start) / this.getNumericIntervalMS()) + 10
+    );
     return (
       Math.round((this.end - this.start) / this.getNumericIntervalMS()) + 10
     );
