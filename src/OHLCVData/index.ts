@@ -72,6 +72,7 @@ class OHLCVData {
       });
       //console.log(data);
       if (data.retMsg == "OK") {
+        console.log("ata Fetched Successfully");
         return data.result.list;
       } else {
         throw new Error(data.retMsg);
