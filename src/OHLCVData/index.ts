@@ -20,6 +20,7 @@ class OHLCVData {
   private end!: number;
   public marketTrend: string = "Unknown";
 
+  private tradePosition: number = 0;
   private data: Array<DataPoint> = [];
 
   public constructor(params: OHLCVDataType) {
@@ -173,20 +174,25 @@ class OHLCVData {
     let lastDp = this.data[position - 1];
     let presentDp = this.data[position];
 
-    const trade = new Trader(100000, 2, this.symbol);
+    const trade = new Trader(1000, this.symbol, 2, 1 / 1.5);
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
-        presentDp.macdLine >= presentDp.signalLine
+        presentDp.macdLine >= presentDp.signalLine &&
+        position != this.tradePosition
       ) {
-        trade.executeTrade("Buy");
+        trade.executeTrade("Buy").then(() => {
+          this.tradePosition = position;
+        });
       }
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine
       ) {
-        trade.executeTrade("Sell");
+        trade.executeTrade("Sell").then(() => {
+          this.tradePosition = position;
+        });
       }
     }
   }
@@ -209,12 +215,12 @@ class OHLCVData {
     }
 
     console.log(
-       presentDp.timestamp,
-       this.marketTrend,
-       "50 EMA => " + presentDp.ema[50],
-       "100 EMA => " + presentDp.ema[100],
-       "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
-     );
+      presentDp.timestamp,
+      this.marketTrend,
+      "50 EMA => " + presentDp.ema[50],
+      "100 EMA => " + presentDp.ema[100],
+      "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
+    );
   }
 }
 

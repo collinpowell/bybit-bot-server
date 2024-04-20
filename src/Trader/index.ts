@@ -7,16 +7,50 @@ class Trader {
   private slPercent!: number;
   private symbol!: string;
 
+  /**
+   *
+   * Margin = m
+   * Actual Profit (%) = p
+   * Actual loss (%) = l
+   * Take Profit (%) = x
+   * Stop Loss (%) = y
+   * Trading Fee (%) = f
+   * PNL Ratio (L:P) = r
+   *
+   * p = x - f
+   * l = y + f = p.r
+   *
+   * y = xr - f(r + 1)
+   * x = 1 / r (y + f) + f
+   *
+   * y = rp - f
+   * x = p + f
+   */
   constructor(
     usdtQuantity: number,
-    tpPercent: number,
     symbol: string,
-    margin = 10
+    actualProfit: number,
+    pnlRatio: number,
+    m = 10
   ) {
     this.symbol = symbol;
-    this.usdtQuantity = usdtQuantity * margin;
-    this.tpPercent = tpPercent / 10;
-    this.slPercent = this.tpPercent / 2;
+    this.usdtQuantity = usdtQuantity * m;
+
+    const tradingFee = 0.055;
+    // Taker Fee, For every trade Taker fee is twice one for trade execution one for TP or SL, therefore actual fee is 2*trading fee
+    const f = 2 * tradingFee;
+
+    const p = actualProfit / 10;
+    let x = p + f;
+    let y = pnlRatio * p - f;
+
+    if (y < 1) {
+      y = 1;
+      x = (1 / pnlRatio) * (y + f) + f;
+    }
+
+    this.tpPercent = x;
+    this.slPercent = y;
   }
 
   public async executeTrade(side: "Buy" | "Sell") {
