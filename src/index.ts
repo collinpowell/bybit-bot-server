@@ -12,9 +12,8 @@ async function main() {
   const end = Date.now();
   const start = end - 24 * days * 60 * 60 * 1000; // 24 hours in milliseconds
   const interval = "1"
-  // Current time in milliseconds
-
   const symbol = "BTCUSDT";
+
   const init = new OHLCVData({
     symbol,
     interval,
@@ -39,36 +38,26 @@ async function main() {
   });
 
   wsClient.on("update", (data) => {
-    //console.log("raw message received ", data);
-
     init.transformSingleDP(data.data[0]);
-
-    // console.log("-----------------------------------------------------");
-    // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
-    // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 1]);
-    // console.log("-----------------------------------------------------");
   });
-
-  wsClient.on("open", (data) => {
-    console.log("connection opened open:");
-  });
-  wsClient.on("response", (data) => {
-    //console.log("log response: ", JSON.stringify(data, null, 2));
-  });
-  wsClient.on("reconnect", ({ wsKey }) => {
-    console.log("ws automatically reconnecting.... ");
-  });
-  wsClient.on("reconnected", (data) => {
-    console.log("ws has reconnected ");
-  });
+  // wsClient.on("open", (data) => {
+  //   console.log("connection opened open:");
+  // });
+  // wsClient.on("response", (data) => {
+  //   //console.log("log response: ", JSON.stringify(data, null, 2));
+  // });
+  // wsClient.on("reconnect", ({ wsKey }) => {
+  //   console.log("ws automatically reconnecting.... ");
+  // });
+  // wsClient.on("reconnected", (data) => {
+  //   console.log("ws has reconnected ");
+  // });
 
   try {
     await wsClient.subscribeV5(topics[0], "linear");
   } catch (error: any) {
     console.log(error.message);
   }
-
-  //console.log(len);
 }
 
 main();
