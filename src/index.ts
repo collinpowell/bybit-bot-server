@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 import OHLCVData from "./OHLCVData";
 
 async function main() {
-  const days = 7; // hrs
+  const days = 2; // hrs
   const end = Date.now();
   const start = end - 24 * days * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -25,7 +25,7 @@ async function main() {
   await init.transform();
 
   const len = init.getAnalyzedData().length;
-
+  console.log(len)
   // console.log("-----------------------------------------------------");
   // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 3]);
   // console.log(init.getAnalyzedData()[init.getAnalyzedData().length - 2]);
