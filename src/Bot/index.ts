@@ -213,6 +213,7 @@ class Bot extends Trader {
     }
 
     console.log(
+      `${this.trades.length} Placed So Far`,
       presentDp.timestamp,
       this.marketTrend,
       "50 EMA => " + presentDp.ema[50],
