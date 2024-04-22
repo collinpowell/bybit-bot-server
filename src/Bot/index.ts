@@ -213,12 +213,12 @@ class Bot extends Trader {
     }
 
     console.log(
-      `${this.trades.length} Placed So Far`,
       presentDp.timestamp,
       this.marketTrend,
       "50 EMA => " + presentDp.ema[50],
       "100 EMA => " + presentDp.ema[100],
-      "Difference => " + Math.abs(presentDp.ema[50] - presentDp.ema[100])
+      "MACD Line => " + presentDp.macdLine,
+      "Signal Line => " + presentDp.signalLine,
     );
   }
 }

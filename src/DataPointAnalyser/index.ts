@@ -10,8 +10,6 @@ interface AnalyserData {
 }
 
 class DataPointAnalyser {
-  private position: number = 0;
-
   static analyze({
     transformedData,
     emaWindows,
@@ -47,7 +45,7 @@ class DataPointAnalyser {
           const closingPrices = transformedData
             .slice(position - window, position)
             .map((item) => item.close);
-          console.log(closingPrices.length, window);
+          //console.log(closingPrices, window);
           prevEMA =
             closingPrices.reduce((sum, price) => sum + price, 0) / window; //Init EMA == SMA
         } else {
@@ -59,12 +57,22 @@ class DataPointAnalyser {
 
     const macdLine = ema[12] && ema[26] ? ema[12] - ema[26] : 0;
     const signalWindow = 9;
-    const closingMACD = transformedData
-      .slice(position - signalWindow, position)
-      .map((item) => item.macdLine);
-    //console.log(closingMACD)
-    const signalLine =
-      closingMACD.reduce((sum, price) => sum + price, 0) / signalWindow;
+
+    let prevSignal = transformedData[position - 1].signalLine;
+    let signalLine = 0;
+    if (!prevSignal) {
+      if (position >= signalWindow) {
+        const closingMACD = transformedData
+          .slice(position - signalWindow, position)
+          .map((item) => item.macdLine);
+        prevSignal = closingMACD.includes(0)
+          ? 0
+          : closingMACD.reduce((sum, price) => sum + price, 0) / signalWindow;
+      } else {
+        prevSignal = 0;
+      }
+    }
+    signalLine = this.calculateEMA(signalWindow, prevSignal, macdLine);
 
     return {
       timestamp: this.formatDate(timestamp),

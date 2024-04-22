@@ -52,10 +52,12 @@ async function main() {
 
   wsClient.on("update", (data) => {
     bot.transformSingleDP(data.data[0]);
+
+    console.log(bot.getAnalyzedData()[len-1])
   });
 
   try {
-    await wsClient.subscribeV5(topics[0], "linear");
+    //await wsClient.subscribeV5(topics[0], "linear");
   } catch (error: any) {
     console.log(error.message);
   }
