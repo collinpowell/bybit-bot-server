@@ -27,8 +27,6 @@ class Bot extends Trader {
   private tradePosition: number = 0;
   private data: Array<DataPoint> = [];
 
-  private isDone: boolean = true;
-
   public constructor(params: BotDataType) {
     super(params.tradeQuantity, params.symbol, params.profit, params.pnlRatio);
     this.interval = params.interval;
