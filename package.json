@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Collin Powell",
   "license": "ISC",
   "dependencies": {
     "bybit-api": "^3.10.1",

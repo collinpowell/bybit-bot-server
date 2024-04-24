@@ -27,6 +27,8 @@ class Bot extends Trader {
   private tradePosition: number = 0;
   private data: Array<DataPoint> = [];
 
+  private isDone: boolean = true;
+
   public constructor(params: BotDataType) {
     super(params.tradeQuantity, params.symbol, params.profit, params.pnlRatio);
     this.interval = params.interval;
@@ -173,18 +175,22 @@ class Bot extends Trader {
       if (
         lastDp.macdLine < lastDp.signalLine &&
         presentDp.macdLine >= presentDp.signalLine &&
-        prevPosition != this.tradePosition
+        prevPosition != this.tradePosition &&
+        this.isDone
       ) {
-        await this.executeTrade("Buy");
+        this.isDone = false;
+        this.isDone = await this.executeTrade("Buy");
         this.tradePosition = prevPosition;
       }
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine &&
-        prevPosition != this.tradePosition
+        prevPosition != this.tradePosition &&
+        this.isDone
       ) {
-        await this.executeTrade("Sell");
+        this.isDone = false;
+        this.isDone = await this.executeTrade("Sell");
         this.tradePosition = prevPosition;
       }
     }
