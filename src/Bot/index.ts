@@ -168,29 +168,26 @@ class Bot extends Trader {
   }
 
   private async trade(currentPrice: number, position: number) {
-    let lastDp = this.data[position - 1];
+    const prevPosition = position - 1;
+    let lastDp = this.data[prevPosition];
     let presentDp = this.data[position];
     if (this.marketTrend == "Buy") {
       if (
         lastDp.macdLine < lastDp.signalLine &&
         presentDp.macdLine >= presentDp.signalLine &&
-        position != this.tradePosition &&
-        this.isDone
+        prevPosition != this.tradePosition
       ) {
-        this.isDone = false;
-        this.isDone = await this.executeTrade("Buy");
-        this.tradePosition = position;
+        await this.executeTrade("Buy");
+        this.tradePosition = prevPosition;
       }
     } else if (this.marketTrend == "Sell") {
       if (
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine &&
-        position != this.tradePosition &&
-        this.isDone
+        prevPosition != this.tradePosition
       ) {
-        this.isDone = false;
-        this.isDone = await this.executeTrade("Sell");
-        this.tradePosition = position;
+        await this.executeTrade("Sell");
+        this.tradePosition = prevPosition;
       }
     }
   }
