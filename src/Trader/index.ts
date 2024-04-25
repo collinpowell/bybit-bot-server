@@ -65,7 +65,9 @@ class Trader {
     this.tpPercent = Number(x.toFixed(4));
     this.slPercent = Number(y.toFixed(4));
 
-    this.getQtySteps()
+    this.getQtySteps().catch(()=>{
+      
+    })
   }
 
   private async getQtySteps(){

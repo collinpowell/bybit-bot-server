@@ -29,6 +29,9 @@ class Bot extends Trader {
 
   private isDone: boolean = true;
 
+  private macdLineMax: number = 0;
+  private macdLineMin: number = 0;
+
   public constructor(params: BotDataType) {
     super(params.tradeQuantity, params.symbol, params.profit, params.pnlRatio);
     this.interval = params.interval;
@@ -123,6 +126,7 @@ class Bot extends Trader {
           item,
           confirm: true,
         });
+        this.checkMACDMinMax(newPoint);
         this.data.push(newPoint);
         this.updateMarketTrend(i);
       });
@@ -130,6 +134,16 @@ class Bot extends Trader {
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+
+  private checkMACDMinMax(data: DataPoint) {
+    if (this.macdLineMax < data.macdLine) {
+      this.macdLineMax = data.macdLine;
+    }
+
+    if (this.macdLineMin > data.macdLine) {
+      this.macdLineMin = data.macdLine;
     }
   }
 
@@ -156,6 +170,7 @@ class Bot extends Trader {
       item,
       confirm: newData?.confirm,
     });
+    this.checkMACDMinMax(newPoint);
     if (this.data[lastPosition].confirm) {
       this.data.push(newPoint);
     } else {
@@ -167,6 +182,28 @@ class Bot extends Trader {
     this.trade(newData?.close, position);
   }
 
+  public calculateTradeProbability(type: "Buy" | "Sell", macdLine: number) {
+    let positiveProbability;
+    let negativeProbability;
+    if (macdLine >= 0) {
+      positiveProbability = macdLine / this.macdLineMax;
+      negativeProbability = 1;
+    } else {
+      positiveProbability = 0;
+      negativeProbability = macdLine / this.macdLineMin;
+    }
+
+    const probability = (positiveProbability + negativeProbability) / 2;
+
+    if (type == "Sell") {
+      return probability * 100;
+    } else if (type == "Buy") {
+      return 100 - probability * 100;
+    } else {
+      return 0;
+    }
+  }
+
   private async trade(currentPrice: number, position: number) {
     const prevPosition = position - 1;
     let lastDp = this.data[prevPosition];
@@ -176,7 +213,8 @@ class Bot extends Trader {
         lastDp.macdLine < lastDp.signalLine &&
         presentDp.macdLine >= presentDp.signalLine &&
         prevPosition != this.tradePosition &&
-        this.isDone
+        this.isDone &&
+        this.calculateTradeProbability("Buy", presentDp.macdLine) > 40
       ) {
         this.isDone = false;
         this.isDone = await this.executeTrade("Buy");
@@ -187,7 +225,8 @@ class Bot extends Trader {
         lastDp.macdLine >= lastDp.signalLine &&
         presentDp.macdLine < presentDp.signalLine &&
         prevPosition != this.tradePosition &&
-        this.isDone
+        this.isDone &&
+        this.calculateTradeProbability("Sell", presentDp.macdLine) > 40
       ) {
         this.isDone = false;
         this.isDone = await this.executeTrade("Sell");
